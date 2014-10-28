@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include <string.h>
+#include <AltSoftSerial.h>
 
 // Define
 #define VERSION 001
@@ -19,8 +20,10 @@ private:
    char* sid;
    char* passwd;
 public:
+	 AltSoftSerial serWifi;
    arwifi();
    arwifi(char* sid,char* passwd);
+   void begin(int band);
    boolean connect(char * url);
    boolean connect(char * host, char * port, int mux);
    void disconnect(int mux);   

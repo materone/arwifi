@@ -18,12 +18,14 @@ char c;
 unsigned long tStart, timeInterval = 10000UL, timeFree = 0UL, timeLast = 0UL;
 
 arwifi::arwifi() {
-  serWifi.begin(9600);
 }
 arwifi::arwifi(char* sid, char* passwd) {
-  serWifi.begin(9600);
+	begin(9600);
   quitAP();
   joinAP(sid, passwd);
+}
+void arwifi::begin(int band){
+	serWifi.begin(band);
 }
 boolean arwifi::connect(char * url) {
   boolean rc = false;
@@ -50,7 +52,8 @@ boolean arwifi::joinAP(char* sid, char* passwd) {
       serWifi.print(passwd);
       serWifi.println("\"");
       ret = waitData("OK", "ERROR", "", "");
-      if (ret.indexOf("OK") != -1) {
+      if (ret.indexOf("OK") != -1) {      	
+  			Serial.println("Joined arwifi::joinAP");
         rc = true;
         break;
       }
@@ -64,11 +67,12 @@ boolean arwifi::joinAP(char* sid, char* passwd) {
   return rc;
 }
 boolean arwifi::quitAP() {
-  Serial.println("arwifi::quitAP");
+  Serial.println("Begin arwifi::quitAP");
   boolean rc = false;
-  serWifi.print("AT+CWQAP");
+  serWifi.println("AT+CWQAP");
   String s = waitData("OK", "ERROR", "", "");
   if (s.indexOf("OK") != -1) {
+  Serial.println("End arwifi::quitAP");
     rc = true;
   }
   return rc;
@@ -112,10 +116,13 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
     if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
 
     //找到任何一个标识符即退出。
-    if ((Tag1 != "") && (data.indexOf(Tag1) == 0)) break;
-    if ((Tag2 != "") && (data.indexOf(Tag2) != -1)) break;
-    if ((Tag3 != "") && (data.indexOf(Tag3) != -1)) break;
-    if ((Tag4 != "") && (data.indexOf(Tag4) != -1)) break;
+    if ((Tag1 != "") && (ret.indexOf(Tag1) != -1)) {
+    	Serial.println("Find Key");
+    	break;
+    }
+    if ((Tag2 != "") && (ret.indexOf(Tag2) != -1)) break;
+    if ((Tag3 != "") && (ret.indexOf(Tag3) != -1)) break;
+    if ((Tag4 != "") && (ret.indexOf(Tag4) != -1)) break;
   }
   return ret;
 }
@@ -128,7 +135,7 @@ void arwifi::getWifiInfo() {
     while (serWifi.available()) {
       c = char(serWifi.read());
       data += c;
-      //Serial.write(c);
+     // Serial.write(c);
       delay(1);
     }
     Serial.print(data);
