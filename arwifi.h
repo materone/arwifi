@@ -14,23 +14,24 @@
 // Define
 #define VERSION 001
 
-class arwif {
+class arwifi {
 private:
    char* sid;
    char* passwd;
 public:
-   arwif();
+   arwifi();
    arwifi(char* sid,char* passwd);
    boolean connect(char * url);
-   boolean connect(char * host, char * port, char * path=null);
-   void disconnect();   
+   boolean connect(char * host, char * port, int mux);
+   void disconnect(int mux);   
    boolean joinAP(char* sid,char* passwd);
    boolean quitAP();
    boolean connected();
    boolean available();
    uint8_t read();
    boolean write(uint8_t* buf, uint16_t length);
-   String waitData(char * tag1,char * tag2=null,char * tag3=null,char * tag4=null);
+   String waitData(char * Tag1,char * Tag2,char * Tag3,char * Tag4);
+   void getWifiInfo();
 };
 
 
