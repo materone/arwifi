@@ -33,6 +33,19 @@ boolean arwifi::connect(char * url) {
 }
 boolean arwifi::connect(char * host, char * port, int mux) {
   boolean rc = false;
+  String ret;
+  serWifi.println("AT+CIPMUX=1");
+  Serial.println(waitData("OK", "ERROR", "", ""));
+  serWifi.print("AT+CIPSTART=");
+  serWifi.print(mux);
+  serWifi.print(",\"TCP\",\"");
+  serWifi.print(host);
+  serWifi.print("\",");
+  serWifi.println(port);
+  Serial.println(ret = waitData("OK", "ERROR", "Linked", ""));
+  if (ret.indexOf("OK") != -1) {
+        rc = true;
+  }
   return rc;
 }
 void arwifi::disconnect(int mux) {
@@ -91,10 +104,26 @@ boolean arwifi::available() {
 }
 uint8_t arwifi::read() {
   uint8_t rc = false;
+  if(serWifi.available()){
+    rc = serWifi.read();
+  }
   return rc;
 }
-boolean arwifi::write(uint8_t* buf, uint16_t length) {
+boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
   boolean rc = false;
+  serWifi.print("AT+CIPSEND=");
+  serWifi.print(mux);
+  serWifi.print(",");
+  serWifi.println(length);
+  String ret = waitData(">","OK", "ERROR", "");
+  if(ret.indexOf(">")!=-1) {
+    for(int i = 0 ; i < length ; i++){      
+      serWifi.write(buf[i]);
+      Serial.write(buf[i]);
+    }
+    String ret = waitData("OK", "ERROR", "", "");
+    if(ret.indexOf("OK")!=-1) rc = true;
+  }
   return rc;
 }
 String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * Tag4 = "") {
@@ -109,7 +138,7 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
         data += c;
         delay(1);
       }
-      Serial.print(data);
+      //Serial.print(data);
       ret += data;
     }
     timeFree = millis();
@@ -117,7 +146,7 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
 
     //找到任何一个标识符即退出。
     if ((Tag1 != "") && (ret.indexOf(Tag1) != -1)) {
-    	Serial.println("Find Key");
+    	//Serial.println("Find Key");
     	break;
     }
     if ((Tag2 != "") && (ret.indexOf(Tag2) != -1)) break;
