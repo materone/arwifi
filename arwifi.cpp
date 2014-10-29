@@ -17,20 +17,39 @@ String data;
 char c;
 unsigned long tStart, timeInterval = 10000UL, timeFree = 0UL, timeLast = 0UL;
 
+/**
+*  
+*/
 arwifi::arwifi() {
 }
+
+/**
+*  
+*/
 arwifi::arwifi(char* sid, char* passwd) {
 	begin(9600);
   quitAP();
   joinAP(sid, passwd);
 }
+
+/**
+*  
+*/
 void arwifi::begin(int band){
 	serWifi.begin(band);
 }
+
+/**
+*  
+*/
 boolean arwifi::connect(char * url) {
   boolean rc = false;
   return rc;
 }
+
+/**
+*  
+*/
 boolean arwifi::connect(char * host, char * port, int mux) {
   boolean rc = false;
   String ret;
@@ -48,9 +67,17 @@ boolean arwifi::connect(char * host, char * port, int mux) {
   }
   return rc;
 }
+
+/**
+*  
+*/
 void arwifi::disconnect(int mux) {
 	serWifi.println("AT+CIPCLOSE=1");
 }
+
+/**
+*  
+*/
 boolean arwifi::joinAP(char* sid, char* passwd) {
   Serial.println("arwifi::joinAP");
   boolean rc = false;
@@ -79,6 +106,10 @@ boolean arwifi::joinAP(char* sid, char* passwd) {
 
   return rc;
 }
+
+/**
+*  
+*/
 boolean arwifi::quitAP() {
   Serial.println("Begin arwifi::quitAP");
   boolean rc = false;
@@ -89,8 +120,11 @@ boolean arwifi::quitAP() {
     rc = true;
   }
   return rc;
-
 }
+
+/**
+*  
+*/
 boolean arwifi::connected() {
   boolean rc = false;
   serWifi.println("AT+CIPSTATUS");
@@ -98,10 +132,18 @@ boolean arwifi::connected() {
   if(ret.indexOf("STATUS:3")!=-1) rc = true;
   return rc;
 }
+
+/**
+*  
+*/
 boolean arwifi::available() {
   //boolean rc = false;
   return serWifi.available();
 }
+
+/**
+*Read a byte from wifi 
+*/
 uint8_t arwifi::read() {
   uint8_t rc = false;
   if(serWifi.available()){
@@ -109,6 +151,10 @@ uint8_t arwifi::read() {
   }
   return rc;
 }
+
+/**
+*  
+*/
 boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
   boolean rc = false;
   serWifi.print("AT+CIPSEND=");
@@ -119,13 +165,20 @@ boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
   if(ret.indexOf(">")!=-1) {
     for(int i = 0 ; i < length ; i++){      
       serWifi.write(buf[i]);
-      Serial.write(buf[i]);
+      //Serial.print(i);
+      //Serial.print("-->");
+      //Serial.println(buf[i],DEC);
     }
     String ret = waitData("OK", "ERROR", "", "");
+    Serial.println(ret);
     if(ret.indexOf("OK")!=-1) rc = true;
   }
   return rc;
 }
+
+/**
+*  
+*/
 String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * Tag4 = "") {
   String ret = "";
   timeLast = millis();
@@ -138,7 +191,7 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
         data += c;
         delay(1);
       }
-      //Serial.print(data);
+      Serial.print(data);
       ret += data;
     }
     timeFree = millis();
@@ -156,6 +209,9 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
   return ret;
 }
 
+/**
+*  
+*/
 void arwifi::getWifiInfo() {
   if (serWifi.available()) {
     digitalWrite(ledPin, HIGH);
