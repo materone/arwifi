@@ -61,7 +61,7 @@ boolean arwifi::connect(char * host, char * port, int mux) {
   serWifi.print(host);
   serWifi.print("\",");
   serWifi.println(port);
-  Serial.println(ret = waitData("OK", "ERROR", "Linked", ""));
+  Serial.println(ret = waitData("OK", "ERROR", "Linked", "CONNECT"));
   if (ret.indexOf("OK") != -1) {
         rc = true;
   }
@@ -73,6 +73,7 @@ boolean arwifi::connect(char * host, char * port, int mux) {
 */
 void arwifi::disconnect(int mux) {
 	serWifi.println("AT+CIPCLOSE=1");
+  	Serial.println(waitData("OK", "ERROR", "Unlink", ""));
 }
 
 /**
@@ -161,7 +162,7 @@ boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
   serWifi.print(mux);
   serWifi.print(",");
   serWifi.println(length);
-  String ret = waitData(">","OK", "ERROR", "");
+  String ret = waitData("\r\n>","OK", "ERROR", "");
   if(ret.indexOf(">")!=-1) {
     for(int i = 0 ; i < length ; i++){      
       serWifi.write(buf[i]);
@@ -169,9 +170,9 @@ boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
       //Serial.print("-->");
       //Serial.println(buf[i],DEC);
     }
-    String ret = waitData("OK", "ERROR", "", "");
+    String ret = waitData("SEND OK", "ERROR", "", "");
     Serial.println(ret);
-    if(ret.indexOf("OK")!=-1) rc = true;
+    if(ret.indexOf("SEND OK")!=-1) rc = true;
   }
   return rc;
 }
@@ -191,7 +192,7 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
         data += c;
         delay(1);
       }
-      Serial.print(data);
+      //Serial.print(data);
       ret += data;
     }
     timeFree = millis();
