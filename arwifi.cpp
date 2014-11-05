@@ -182,27 +182,50 @@ boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
 */
 String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * Tag4 = "") {
   String ret = "";
+  boolean rcvData = false;
   timeLast = millis();
+  int cnt = 0;
   while (1)
   {
     if (serWifi.available()) {
       data = "";
+      rcvData = true;
       while (serWifi.available()) {
         c = char(serWifi.read());
+        if(cnt++>100){
+          delay(1);
+          continue;
+        }
         data += c;
         delay(1);
       }
-      //Serial.print(data);
-      ret += data;
+      cnt = 0;
+      Serial.print("=== ");
+      Serial.print(cnt);
+      Serial.print(" ===");
+      Serial.println(data);
+      if(cnt>100){
+        Serial.print("====Trunked====");
+        ret += data.substring(0,99);
+        Serial.println(ret.length());
+      }else{
+        ret += data;
+      }
     }
-    timeFree = millis();
+    
     if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
+    timeFree = millis();
+    
+    if(!rcvData){
+      continue;
+    }else{
+      rcvData = false;
+    }
+    Serial.print("+++");
+    Serial.println(ret);
 
     //找到任何一个标识符即退出。
-    if ((Tag1 != "") && (ret.indexOf(Tag1) != -1)) {
-    	//Serial.println("Find Key");
-    	break;
-    }
+    if ((Tag1 != "") && (ret.indexOf(Tag1) != -1)) break;
     if ((Tag2 != "") && (ret.indexOf(Tag2) != -1)) break;
     if ((Tag3 != "") && (ret.indexOf(Tag3) != -1)) break;
     if ((Tag4 != "") && (ret.indexOf(Tag4) != -1)) break;
