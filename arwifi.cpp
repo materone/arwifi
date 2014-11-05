@@ -212,9 +212,8 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
         ret += data;
       }
     }
-    
-    if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
     timeFree = millis();
+    if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
     
     if(!rcvData){
       continue;
