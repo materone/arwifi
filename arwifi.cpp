@@ -162,7 +162,7 @@ boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
   serWifi.print(mux);
   serWifi.print(",");
   serWifi.println(length);
-  String ret = waitData("\r\n>","OK", "ERROR", "");
+  String ret = waitData(">","OK", "ERROR", "");
   if(ret.indexOf(">")!=-1) {
     for(int i = 0 ; i < length ; i++){      
       serWifi.write(buf[i]);
