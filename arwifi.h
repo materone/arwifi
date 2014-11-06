@@ -24,6 +24,7 @@ public:
    arwifi();
    arwifi(char* sid,char* passwd);
    void begin(int band);
+   void setTimeout(unsigned long ms);
    boolean connect(char * url);
    boolean connect(char * host, char * port, int mux);
    void disconnect(int mux);   

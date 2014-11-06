@@ -39,6 +39,14 @@ void arwifi::begin(int band){
 	serWifi.begin(band);
 }
 
+
+/**
+*  
+*/
+void arwifi::setTimeout(unsigned long ms){
+  timeInterval = ms;
+}
+
 /**
 *  
 */
@@ -206,11 +214,9 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
       Serial.println(data);
       if(cnt>100){
         Serial.print("====Trunked====");
-        ret += data.substring(0,99);
-        Serial.println(ret.length());
-      }else{
-        ret += data;
       }
+      ret += data;
+      cnt = 0;
     }
     timeFree = millis();
     if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
