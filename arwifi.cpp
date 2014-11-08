@@ -1,4 +1,4 @@
-/*
+﻿/*
  arwif.cpp - A simple esp8266 wifi lib.
   Tony
   Chufan Studio
@@ -37,6 +37,14 @@ arwifi::arwifi(char* sid, char* passwd) {
 */
 void arwifi::begin(int band){
 	serWifi.begin(band);
+}
+
+
+/**
+*  
+*/
+void arwifi::setTimeout(unsigned long ms){
+  timeInterval = ms;
 }
 
 /**
@@ -207,7 +215,7 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
         Serial.print("====Trunked====");
       }
       ret += data;
-      cnt = 0;      
+      cnt = 0;  
     }
     timeFree = millis();
     if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
