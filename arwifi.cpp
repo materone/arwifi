@@ -164,7 +164,7 @@ boolean arwifi::write(uint8_t* buf, uint16_t length,int mux) {
   serWifi.println(length);
   String ret = waitData(">","OK", "ERROR", "");
   if(ret.indexOf(">")!=-1) {
-    for(int i = 0 ; i < length ; i++){      
+    for(int i = 0 ; i < length ; i++){    
       serWifi.write(buf[i]);
       //Serial.print(i);
       //Serial.print("-->");
@@ -199,18 +199,15 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
         data += c;
         delay(1);
       }
-      cnt = 0;
       Serial.print("=== ");
       Serial.print(cnt);
       Serial.print(" ===");
       Serial.println(data);
       if(cnt>100){
         Serial.print("====Trunked====");
-        ret += data.substring(0,99);
-        Serial.println(ret.length());
-      }else{
-        ret += data;
       }
+      ret += data;
+      cnt = 0;      
     }
     timeFree = millis();
     if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
