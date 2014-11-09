@@ -200,29 +200,29 @@ String arwifi::waitData(char * Tag1, char * Tag2 = "", char * Tag3 = "", char * 
       rcvData = true;
       while (serWifi.available()) {
         c = char(serWifi.read());
-        if(cnt++>100){
-          delay(1);
-          continue;
+        if (cnt++ < 100) {
+          data += c;
         }
-        data += c;
-        delay(1);
+        Serial.print(c);
+        //delay(1);
       }
+      Serial.println();
       Serial.print("=== ");
       Serial.print(cnt);
-      Serial.print(" ===");
-      Serial.println(data);
-      if(cnt>100){
-        Serial.print("====Trunked====");
+      Serial.println(" ===");
+      //Serial.println(data);
+      if (cnt > 100) {
+        Serial.println("====Trunked====");
       }
       ret += data;
-      cnt = 0;  
+      cnt = 0;
     }
     timeFree = millis();
     if ((timeFree > timeLast) && (timeFree - timeLast) > timeInterval) break;
-    
-    if(!rcvData){
+
+    if (!rcvData) {
       continue;
-    }else{
+    } else {
       rcvData = false;
     }
     Serial.print("+++");
