@@ -24,15 +24,17 @@ public:
    arwifi();
    arwifi(char* sid,char* passwd);
    void begin(int band);
+   void setTimeout(unsigned long ms);
    boolean connect(char * url);
    boolean connect(char * host, char * port, int mux);
    void disconnect(int mux);   
    boolean joinAP(char* sid,char* passwd);
    boolean quitAP();
    boolean connected();
+   void stop();
    boolean available();
    uint8_t read();
-   boolean write(uint8_t* buf, uint16_t length);
+   boolean write(uint8_t* buf, uint16_t length,int mux);
    String waitData(char * Tag1,char * Tag2,char * Tag3,char * Tag4);
    void getWifiInfo();
 };
